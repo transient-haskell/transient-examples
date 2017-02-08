@@ -1,6 +1,6 @@
 #!/usr/bin/env ./execthirdline.sh
 -- compile and run within a docker image
--- set -e && executable=`basename -s .hs ${1}` &&  docker run -it -v $(pwd):/work agocorona/transient:04-02-2017  bash -c "cabal install mono-traversable unagi-chan && ghc /work/${1} && /work/${executable} ${2} ${3}"
+-- set -e && executable=`basename -s .hs ${1}` &&  docker run -it -v $(pwd):/work agocorona/transient:05-02-2017  bash -c "cabal install mono-traversable unagi-chan && ghc /work/${1} && /work/${executable} ${2} ${3}"
 
 
 -- transient application for the websocket shootout

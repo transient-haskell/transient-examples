@@ -1,9 +1,9 @@
 #!/usr/bin/env ./execthirdline.sh
 -- compile it with ghcjs and  execute it with runghc
--- set -e && port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v $(pwd):/work agocorona/transient:01-27-2017  bash -c "mkdir -p static && ghcjs /work/${1} -o static/out && runghc /work/${1} ${2} ${3}"
+-- set -e && port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v $(pwd):/work agocorona/transient:05-02-2017  bash -c "mkdir -p static && ghcjs /work/${1} -o static/out && runghc /work/${1} ${2} ${3}"
 
 
--- set -e &&  port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v /c/Users/magocoal/OneDrive/Haskell/devel:/devel agocorona/transient:01-27-2017  bash -c "mkdir -p static && ghcjs  -j2 -isrc -i/devel/transient/src -i/devel/transient-universe/src -i/devel/ghcjs-hplay/src -i/devel/ghcjs-perch/src /devel/transient-universe/examples/$1 -o static/out && runghc  -j2 -isrc -i/devel/transient/src -i/devel/transient-universe/src -i/devel/ghcjs-hplay/src -i/devel/ghcjs-perch/src /devel/transient-universe/examples/$1 $2 $3 $4"
+-- set -e &&  port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v /c/Users/magocoal/OneDrive/Haskell/devel:/devel agocorona/transient:05-02-2017  bash -c "mkdir -p static && ghcjs  -j2 -isrc -i/devel/transient/src -i/devel/transient-universe/src -i/devel/ghcjs-hplay/src -i/devel/ghcjs-perch/src /devel/transient-universe/examples/$1 -o static/out && runghc  -j2 -isrc -i/devel/transient/src -i/devel/transient-universe/src -i/devel/ghcjs-hplay/src -i/devel/ghcjs-perch/src /devel/transient-universe/examples/$1 $2 $3 $4"
 
 -- usage: ./distributedApps.hs -p start/<docker ip>/<port>
 

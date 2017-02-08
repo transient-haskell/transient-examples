@@ -1,6 +1,6 @@
 #!/usr/bin/env ./execthirdline.sh
 -- compile and run within a docker image
--- set -e && executable=`basename -s .hs ${1}` &&  docker run -it -v $(pwd):/work agocorona/transient:04-02-2017  bash -c "ghc /work/${1} && /work/${executable} ${2} ${3}"
+-- set -e && executable=`basename -s .hs ${1}` &&  docker run -it -v $(pwd):/work agocorona/transient:05-02-2017  bash -c "ghc /work/${1} && /work/${executable} ${2} ${3}"
 
 import           Transient.Base
 import           Network
