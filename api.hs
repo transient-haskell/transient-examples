@@ -2,10 +2,10 @@
 -- compile it with ghcjs and  execute it with runghc
 -- set -e && port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v $(pwd):/work agocorona/transient:05-02-2017  bash -c "runghc /work/${1} ${2} ${3}"
 
-{- execute as ./api.hs  -p start/192.168.99.100/8080
+{- execute as ./api.hs  -p start/<docker ip>/<port>
 
- invoque: curl http://192.168.99.100:8080/api/hello/john
-          curl http://192.168.99.100:8080/api/hellos/john
+ invoque: curl http://<docker ip>/<port>/api/hello/john
+          curl http://<docker ip>/<port>/api/hellos/john
 -}
 
 import Transient.Base
