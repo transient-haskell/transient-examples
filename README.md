@@ -1,7 +1,7 @@
 Transient examples
 ==================
 
-Latest examples for [transient](https://github.com/transient-haskell/transient), ]transient-universe](https://github.com/transient-haskell/transient-universe) and [ghcjs-hplay](https://github.com/transient-haskell/ghcjs-hplay)
+Latest examples for [transient](https://github.com/transient-haskell/transient), [transient-universe](https://github.com/transient-haskell/transient-universe) and [ghcjs-hplay](https://github.com/transient-haskell/ghcjs-hplay)
 
 Some features, like the REST API are only available in the test branches of the github repositories
 
