@@ -108,84 +108,84 @@ mapReduce= onBrowser $ do
            lliftIO $ print content
 
 
-           r<- reduce  (+) . mapKeyB (\w -> (w, 1 :: Int))  $ distribute $ V.fromList $ words content
-           lliftIO $ putStr "result:" >> print r
-           return   (r :: M.Map String Int)
-
-
-    local . render $ rawHtml $ do
-             h1 "Results"
-             mconcat[i "word " >> b w >> i " appears " >> b n >> i " times" >> br
-                    | (w,n) <- M.assocs r]
-
-    empty
-
-fs= fromString
-size= atr (fs "size")
--- a chat widget that run in the browser and in a cloud of servers
-
-
-chat = onBrowser $ do
-    let chatbox= fs "chatbox" -- <- local  genNewId
-    local . render . rawHtml $ do   -- Perch monads
-            h1 "Federated chat server"
-
-            div ! id chatbox
-                ! style (fs $"overflow: auto;height: 200px;"
-                         ++  "background-color: #FFCC99; max-height: 200px;")
-                $ noHtml  -- create the chat box
-
-    sendMessages   <|>  waitMessages chatbox
-
-  where
-
-  sendMessages   = do
-
-      let msg = fs "messages" -- <-   local genNewId
-      let entry= boxCell msg ! size  (fs "60")
-      (nick,text) <- local . render $  (,) <$> getString (Just "anonymous") ! size (fs "10")
-                                           <*> mk entry Nothing  `fire` OnChange
-                                           <** inputSubmit "send"
-                                           <++ br
-      local $ entry .= ""
-      guard (not $ null text)
-
-      atRemote $ do
-          node <- local getMyNode
-          clustered $ local $ putMailbox  (showPrompt nick node ++ text )  >> empty :: Cloud ()
-          empty
-
+               r<- reduce  (+) . mapKeyB (\w -> (w, 1 :: Int))  $ distribute $ V.fromList $ words content
+               lliftIO $ putStr "result:" >> print r
+               return   (r :: M.Map String Int)
+    
+    
+        local . render $ rawHtml $ do
+                 h1 "Results"
+                 mconcat[i "word " >> b w >> i " appears " >> b n >> i " times" >> br
+                        | (w,n) <- M.assocs r]
+    
+        empty
+    
+    fs= fromString
+    size= atr (fs "size")
+    -- a chat widget that run in the browser and in a cloud of servers
+    
+    
+    chat = onBrowser $ do
+        let chatbox= fs "chatbox" -- <- local  genNewId
+        local . render . rawHtml $ do   -- Perch monads
+                h1 "Federated chat server"
+    
+                div ! id chatbox
+                    ! style (fs $"overflow: auto;height: 200px;"
+                             ++  "background-color: #FFCC99; max-height: 200px;")
+                    $ noHtml  -- create the chat box
+    
+        sendMessages   <|>  waitMessages chatbox
+    
       where
-      fs= fromString
-
-      showPrompt u (Node h p _ _)= u ++ "@" ++ h ++ ":" ++ show p ++ "> "
-
-  waitMessages chatbox = do
-
-      resp <-  atRemote . local $ do
-           labelState $ "getMailbox"
-           r <-  single getMailbox
-           return r
-                                                           -- wait in the server for messages
-
-      local . render . at (fs "#" <> chatbox) Append $ rawHtml $ do
-                                          p (resp :: String)    -- display the response
-#ifdef ghcjs_HOST_OS
-                                          liftIO $ scrollBottom $ fs "chatbox"
-
-
-foreign import javascript unsafe
-  "var el= document.getElementById($1);el.scrollTop=  el.scrollHeight"
-  scrollBottom  :: JS.JSString -> IO()
-#endif
-
-monitorNodes= onBrowser $ do
-    local . render $ rawHtml $ do
-         h1 "Nodes connected"
-         div ! atr (fs "id") (fs "nodes") $ noHtml
-
-    nodes <- atRemote . local  . single $  sample getNodes 1000000
-
-    local . render . at (fs "#nodes") Insert . rawHtml $
-           table $ mconcat[tr $ td h >> td p >> td s | Node h p _ s  <- nodes]
-    empty
+    
+      sendMessages   = do
+    
+          let msg = fs "messages" -- <-   local genNewId
+          let entry= boxCell msg ! size  (fs "60")
+          (nick,text) <- local . render $  (,) <$> getString (Just "anonymous") ! size (fs "10")
+                                               <*> mk entry Nothing  `fire` OnChange
+                                               <** inputSubmit "send"
+                                               <++ br
+          local $ entry .= ""
+          guard (not $ null text)
+    
+          atRemote $ do
+              node <- local getMyNode
+              clustered $ local $ putMailbox  (showPrompt nick node ++ text )  >> empty :: Cloud ()
+              empty
+    
+          where
+          fs= fromString
+    
+          showPrompt u (Node h p _ _)= u ++ "@" ++ h ++ ":" ++ show p ++ "> "
+    
+      waitMessages chatbox = do
+    
+          resp <-  atRemote . local $ do
+               labelState $ "getMailbox"
+               r <-  single getMailbox
+               return r
+                                                               -- wait in the server for messages
+    
+          local . render . at (fs "#" <> chatbox) Append $ rawHtml $ do
+                                              p (resp :: String)    -- display the response
+    #ifdef ghcjs_HOST_OS
+                                              liftIO $ scrollBottom $ fs "chatbox"
+    
+    
+    foreign import javascript unsafe
+      "var el= document.getElementById($1);el.scrollTop=  el.scrollHeight"
+      scrollBottom  :: JS.JSString -> IO()
+    #endif
+    
+    monitorNodes= onBrowser $ do
+        local . render $ rawHtml $ do
+             h1 "Nodes connected"
+             div ! atr (fs "id") (fs "nodes") $ noHtml
+    
+        nodes <- atRemote . local  . single $  sample getNodes 1000000
+    
+        local . render . at (fs "#nodes") Insert . rawHtml $
+               table $ mconcat[tr $ td h >> td p >> td s | Node h p _ s  <- nodes]
+        empty

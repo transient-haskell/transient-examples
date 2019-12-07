@@ -1,7 +1,10 @@
-#!/usr/bin/env ./execthirdline.sh
--- compile it with ghcjs and  execute it with runghc
--- set -e && port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v $(pwd):/work agocorona/transient:05-02-2017  bash -c "runghc /work/${1} ${2} ${3}"
+#!/usr/bin/env execthirdlinedocker.sh
 
+-- runghc -DDEBUG -threaded  -i../develold/TCache -i../transient/src -i../transient-universe/src -i../axiom/src    $1  ${2} ${3} 
+
+-- mkdir -p ./static && ghcjs --make  -DDEBUG  -i../transient/src -i../transient-universe/src  -i../axiom/src   $1 -o static/out && runghc -DDEBUG -threaded  -i../develold/TCache -i../transient/src -i../transient-universe/src -i../axiom/src    $1  ${2} ${3} 
+
+ 
 {- execute as ./api.hs  -p start/<docker ip>/<port>
 
  invoque: curl http://<docker ip>/<port>/api/hello/john
@@ -9,7 +12,7 @@
 -}
 
 import Transient.Base
-import Transient.Move
+import Transient.Move.Internals
 import Transient.Move.Utils
 import Transient.Indeterminism
 import Control.Applicative
@@ -24,7 +27,7 @@ main = keep' . freeThreads $ initNode   apisample
 apisample= api $ hello <|> hellostream
     where
     hello= do
-        paramName "hello"
+        param "hello"
         name <- paramVal
         let msg=  "hello " ++ name ++ "\n"
             len= length msg

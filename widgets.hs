@@ -1,3 +1,10 @@
+#!/usr/bin/env execthirdlinedocker.sh
+
+-- cd `dirname $1` && mkdir -p ./static && ghcjs -DDEBUG  -i../transient/src -i../transient-universe/src  -i../axiom/src  `basename $1` -o static/out && ghc -DDEBUG -threaded  -i../develold/TCache -i../transient/src -i../transient-universe/src -i../axiom/src  `basename $1` && ./`basename $1 .hs`  ${2} ${3}
+
+-- cd `dirname $1` && mkdir -p ./static && ghcjs -DDEBUG `basename $1`  -o static/out && ghc -DDEBUG -threaded  `basename $1` && ./`basename $1 .hs`  ${2} ${3}
+
+
 {-# LANGUAGE DeriveDataTypeable , ExistentialQuantification
     ,ScopedTypeVariables, StandaloneDeriving, RecordWildCards, FlexibleContexts, CPP
     ,GeneralizedNewtypeDeriving #-}
@@ -52,7 +59,9 @@ Also the <br> tags have been moved to the widgets and the **> has been substitut
 
 -}
 
-main= simpleWebApp 8081 $ onBrowser $ local $   buttons  <|> linksample
+data Person= Person{name :: String , age :: Int} deriving (Read,Show)
+
+main= keep $ initNode $ onBrowser $ local $   buttons  <|> linksample
     where
     linksample= do
           r <-  render $ br ++> br ++> wlink "Hi!" (toElem "This link say Hi!")`fire` OnClick
@@ -61,20 +70,29 @@ main= simpleWebApp 8081 $ onBrowser $ local $   buttons  <|> linksample
     buttons :: TransIO ()
     buttons= do
            render . rawHtml $ p "Different input elements:"
-           radio <|> checkButton  <|> select
+           inputPerson <|> radio <|> checkButton <|> select
 
+
+
+    inputPerson= do
+       per <- render $ Person <$> (div <<< inputString Nothing) -- `fire` OnChange
+                              <*> (div <<< inputInt Nothing) 
+                              <** inputSubmit "send" `fire` OnClick
+       render . rawHtml $ p per
+    
     checkButton :: TransIO ()
     checkButton=do
            rs <- render $  br ++> br ++>  getCheckBoxes(
-                           ((setCheckBox False "Red"    <++ b "red")   `fire` OnClick)
-                        <> ((setCheckBox False "Green"  <++ b "green") `fire` OnClick)
-                        <> ((setCheckBox False "blue"   <++ b "blue")  `fire` OnClick))
+                           ((setCheckBox False "Red"   <++ b "red")   `fire` OnClick)
+                        <> ((setCheckBox True "Green"  <++ b "green") `fire` OnClick) 
+                        <> ((setCheckBox False "blue"  <++ b "blue")  `fire` OnClick))
            render $ rawHtml $ fromString " returns: " <> b (show rs)
+           empty
 
     radio :: TransIO ()
     radio= do
-           r <- render $ getRadio [fromString v ++> setRadioActive v
-                         | v <- ["red","green","blue"]]
+           r <- render $ getRadio [fromString v ++> setRadioActive True v
+                                    | v <- ["red","green","blue"]]
 
            render $ rawHtml $ fromString " returns: " <> b ( show r )
 

@@ -1,6 +1,6 @@
-#!/usr/bin/env ./execthirdline.sh
+#!/usr/bin/env execthirdlinedocker.sh
 -- compile it with ghcjs and  execute it with runghc
--- set -e && port=`echo ${3} | awk -F/ '{print $(3)}'` && docker run -it -p ${port}:${port} -v $(pwd):/work agocorona/transient:01-27-2017  bash -c "mkdir -p static && ghcjs /work/${1} -o static/out && runghc /work/${1} ${2} ${3}"
+-- mkdir -p static && ghcjs ${1} -o static/out && runghc ${1} ${2} ${3}
 
 -- To execute directly from source, you need docker installed
 
@@ -39,11 +39,11 @@ demo = onBrowser $ do
 
           wlink () (p " stream fibonacci numbers")
      -- stream fibonacci
-    r <-  atRemote $ do
+    r <- do  --  atRemote $ do
           let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) :: [Int]  -- fibonacci numb. definition
           r <- local . threads 1 . choose $ take 10 fibs
-          lliftIO $ print r
-          lliftIO $ threadDelay 1000000
+          localIO $ print r
+          localIO $ threadDelay 1000000
           return r
 
     local . render . at (fs "#fibs") Append $ rawHtml $ (h2 r)
@@ -63,7 +63,7 @@ demo2 = do
             OnKeyUp <++
             br     
                                                -- new line
-     r <-  atRemote . lliftIO $ print (name ++ " calling") >> return ("Hi " ++ name)
+     r <-  atRemote . localIO $ print (name ++ " calling") >> return ("Hi " ++ name)
      local . render . rawHtml $  do p " returned"
                                     h2 r
 
